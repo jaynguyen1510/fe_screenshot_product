@@ -1,0 +1,22 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output
+/dist
+/build
+
+# .env file (có chứa thông tin nhạy cảm)
+.env
+
+# Các tệp hệ thống và IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Tệp log
+*.log
+
+# Các tệp được tạo ra khi sử dụng Puppeteer hoặc công cụ khác
+/puppeteer-cache/
