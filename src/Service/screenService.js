@@ -14,7 +14,7 @@ export const screenShotCellPhones = async (url) => {
     );
     return response.data.screenshots; // Trả về dữ liệu ảnh chụp màn hình
   } catch (error) {
-    console.error("Lỗi khi chụp ảnh màn hình:", error);
+    console.error("Lỗi khi chụp ảnh màn hình rồi:", error);
     throw error; // Ném lại lỗi để có thể xử lý ở nơi gọi hàm
   }
 };
