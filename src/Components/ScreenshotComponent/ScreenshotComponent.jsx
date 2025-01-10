@@ -111,7 +111,7 @@ const ScreenshotComponent = () => {
       mutateCellPhoneS(url);
     } catch (error) {
       setErrorMessage(
-        "Bạn đã nhập sai đường link hoặc có lỗi xảy ra, vui lòng tải lại trang."
+        "Bạn đã nhập sai đường link hoặc có lỗi xảy ra, vui lòng load lại trang."
       );
       console.error(error);
     }
