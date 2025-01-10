@@ -7,7 +7,7 @@ const HeaderComponents = () => {
         </h1>
 
         <a
-          href="/be_api.zip" // Liên kết tới file.zip trong thư mục public
+          href="https://drive.google.com/uc?export=download&id=1mNMTszLOxZKOTVL_MEhEGlu7trIXZeGI"
           className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
           download
         >
