@@ -33,3 +33,27 @@ export const screenShotDiDongViet = async (url) => {
     throw error; // Ném lại lỗi để có thể xử lý ở nơi gọi hàm
   }
 };
+
+export const screenShotHoangHa = async (url) => {
+  try {
+    const response = await axios.post(`${apiUrl}/screenShot/screen-hoangha`, {
+      url,
+    });
+    return response.data.screenshots; // Trả về dữ liệu ảnh chụp màn hình
+  } catch (error) {
+    console.error("Lỗi khi chụp ảnh màn hình:", error);
+    throw error; // Ném lại lỗi để có thể xử lý ở nơi gọi hàm
+  }
+};
+export const screenshotTgdd = async (url) => {
+  try {
+    const response = await axios.post(
+      `${apiUrl}/screenShot/screen-thegiodidong`,
+      { url }
+    );
+    return response.data.screenshots; // Trả về dữ liệu ảnh chụp màn hình
+  } catch (error) {
+    console.error("Lỗi khi chụp ảnh màn hình:", error);
+    throw error; // Ném lại lỗi để có thể xử lý ở nơi gọi hàm
+  }
+};

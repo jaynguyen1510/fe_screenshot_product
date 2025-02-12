@@ -1,48 +1,35 @@
 import JSZip from "jszip";
-import { optionsWeb } from "../../utils.js";
 import { saveAs } from "file-saver";
-import { useState, useEffect } from "react";
-import { Button, Select } from "flowbite-react";
-import useScreenCellPhoneS from "../../Hook/useScreenCellPhoneS.js";
-import useScreenDidongviet from "../../Hook/useScreenDidongviet.js";
-import useScreenHoangHa from "../../Hook/useScreenHoangHa.js";
 
-const ScreenshotComponent = () => {
-  const {
-    mutateCellPhoneS,
-    isLoadingCellPhoneS,
-    isErrorCellPhoneS,
-    dataCellPhoneS,
-    errorCellPhoneS,
-  } = useScreenCellPhoneS();
-  const {
-    mutateDiDongViet,
-    isLoadingDiDongViet,
-    isErrorDiDongViet,
-    dataDiDongViet,
-    errorDiDongViet,
-  } = useScreenDidongviet();
-  const {
-    mutateHoangHa,
-    isLoadingHoangHa,
-    isErrorHoangHa,
-    dataHoangHa,
-    errorHoangHa,
-  } = useScreenHoangHa();
+import { useState, useEffect } from "react";
+import useScreenThegioididong from "../../Hook/useScreenThegioididong";
+import { Select, Button } from "flowbite-react";
+import { optionsWeb } from "../../utils";
+
+const ScreenshotSingleProduct = () => {
+  const { mutateTgdd, isErrorTgdd, isLoadingTgdd, dataTgdd, errorTgdd } =
+    useScreenThegioididong();
   const [url, setUrl] = useState("");
   const [screenShots, setScreenShots] = useState([]);
   const [visibleScreenshots, setVisibleScreenshots] = useState(6);
   const [selectOption, setSelectOption] = useState("cellPhoneS");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSelectChange = (e) => {
-    const selectOption = e.target.value;
-    setUrl("");
-    setSelectOption(selectOption);
-  };
   useEffect(() => {
-    setScreenShots([]); // Reset screenShots khi đổi lựa chọn
-  }, [selectOption]);
+    if (dataTgdd) {
+      const { productName, screenshots, productPrice } = dataTgdd;
+
+      if (screenshots && screenshots.length > 0) {
+        const formattedScreenshots = screenshots.map((screenshot) => ({
+          screenshot,
+          productName,
+          productPrice,
+        }));
+
+        setScreenShots(formattedScreenshots);
+      }
+    }
+  }, [dataTgdd]);
 
   // Hàm xử lý sắp xếp chung
   const sortProducts = (data) => {
@@ -62,41 +49,27 @@ const ScreenshotComponent = () => {
       return priceB - priceA;
     });
   };
-
-  // Hàm xử lý sắp xếp CellPhoneS
-  const sortCellPhoneS = (data) => sortProducts(data);
-
-  // Hàm xử lý sắp xếp DiDongViet
-  const sortDiDongViet = (data) => sortProducts(data);
-
-  // Hàm xử lý sắp xếp HoangHa
-  const sortHoangHa = (data) => sortProducts(data);
   // Hàm xử lý sắp xếp tgdd
-
-  // Hàm chính để call api
-
+  const sortThegioididong = (data) => sortProducts(data);
   // useEffect gọi các hàm sắp xếp
   useEffect(() => {
     if (
-      selectOption === "cellPhoneS" &&
-      Array.isArray(dataCellPhoneS) &&
-      dataCellPhoneS.length > 0
+      selectOption === "thegioididong" &&
+      Array.isArray(dataTgdd) &&
+      dataTgdd.length > 0
     ) {
-      setScreenShots(sortCellPhoneS(dataCellPhoneS));
-    } else if (
-      selectOption === "didongviet" &&
-      Array.isArray(dataDiDongViet) &&
-      dataDiDongViet.length > 0
-    ) {
-      setScreenShots(sortDiDongViet(dataDiDongViet));
-    } else if (
-      selectOption === "hoangha" &&
-      Array.isArray(dataHoangHa) &&
-      dataHoangHa.length > 0
-    ) {
-      setScreenShots(sortHoangHa(dataHoangHa));
+      setScreenShots(sortThegioididong(dataTgdd));
     }
-  }, [selectOption, dataCellPhoneS, dataDiDongViet, dataHoangHa]);
+  }, [selectOption, dataTgdd]);
+
+  const handleSelectChange = (e) => {
+    const selectOption = e.target.value;
+    setUrl("");
+    setSelectOption(selectOption);
+  };
+  useEffect(() => {
+    setScreenShots([]); // Reset screenShots khi đổi lựa chọn
+  }, [selectOption]);
 
   // Hàm kiểm tra URL và xử lý lỗi
   const validateURL = (url) => {
@@ -106,36 +79,13 @@ const ScreenshotComponent = () => {
     }
     return true;
   };
-  // Hàm xử lý việc gọi mutation cho CellPhoneS
-  const captureCellPhoneS = (url) => {
+
+  const captureThegioididong = (url) => {
     try {
-      mutateCellPhoneS(url);
-    } catch (error) {
+      mutateTgdd(url);
+    } catch (err) {
       setErrorMessage(
         "Bạn đã nhập sai đường link hoặc có lỗi xảy ra, vui lòng load lại trang."
-      );
-      console.error(error);
-    }
-  };
-
-  const captureHoangHa = (url) => {
-    try {
-      mutateHoangHa(url);
-    } catch (err) {
-      setErrorMessage(
-        "Bạn đã nhập sai đường link hoặc có lỗi xảy ra, vui lòng tải lại trang."
-      );
-      console.error(err);
-    }
-  };
-
-  // Hàm xử lý việc gọi mutation cho DiDongViet
-  const captureDiDongViet = (url) => {
-    try {
-      mutateDiDongViet(url);
-    } catch (err) {
-      setErrorMessage(
-        "Bạn đã nhập sai đường link hoặc có lỗi xảy ra, vui lòng tải lại trang."
       );
       console.error(err);
     }
@@ -145,32 +95,43 @@ const ScreenshotComponent = () => {
     if (!validateURL(url)) {
       return;
     }
-    if (selectOption === "cellPhoneS") {
-      captureCellPhoneS(url);
-    } else if (selectOption === "didongviet") {
-      captureDiDongViet(url);
-    } else if (selectOption === "hoangha") {
-      captureHoangHa(url);
+    if (selectOption === "thegioididong") {
+      captureThegioididong(url);
     }
   };
 
+  // const handleCombineScreenshots = async (screenshotsData) => {
+  //   if (screenshotsData.length === 0) return;
+
+  //   const canvas = createCanvas(screenshotsData.length);
+  //   await drawImagesOnCanvas(canvas, screenshotsData);
+
+  //   const blob = await createBlobFromCanvas(canvas);
+  //   saveAs(blob, "combined_screenshot.png");
+  // };
   const handleCombineScreenshots = async (screenshotsData) => {
-    const chunkSize = 6;
-    const chunks = splitIntoChunks(screenshotsData, chunkSize);
+    if (!screenshotsData || screenshotsData.length === 0) return;
+
+    const chunks = splitIntoChunks(screenshotsData, 5); // Nhóm tối đa 5 ảnh
     const zip = new JSZip();
 
     for (let i = 0; i < chunks.length; i++) {
       const group = chunks[i];
-      const canvas = createCanvas(group.length);
-      await drawImagesOnCanvas(canvas, group);
+
+      // Load hình ảnh để lấy kích thước thực tế
+      const images = await loadImages(group);
+      const canvas = createCanvas(images);
+      await drawImagesOnCanvas(canvas, images);
+
       const blob = await createBlobFromCanvas(canvas);
       zip.file(`combined_screenshot_group_${i + 1}.png`, blob);
     }
 
-    const content = await zip.generateAsync({ type: "blob" });
-    saveAs(content, "screenshots.zip");
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+    saveAs(zipBlob, "screenshots.zip");
   };
 
+  // Chia ảnh thành từng nhóm nhỏ
   const splitIntoChunks = (data, chunkSize) => {
     const chunks = [];
     for (let i = 0; i < data.length; i += chunkSize) {
@@ -179,33 +140,45 @@ const ScreenshotComponent = () => {
     return chunks;
   };
 
-  const createCanvas = (numberOfImages) => {
+  // Load hình ảnh để lấy kích thước thực tế
+  const loadImages = async (screenshots) => {
+    return Promise.all(
+      screenshots.map(({ screenshot }) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () =>
+            resolve({ img, width: img.width, height: img.height });
+          img.onerror = reject;
+          img.src = screenshot;
+        });
+      })
+    );
+  };
+
+  // Tạo canvas với tất cả ảnh trên 1 hàng ngang
+  const createCanvas = (images) => {
+    const totalWidth = images.reduce((sum, img) => sum + img.width, 0);
+    const maxHeight = Math.max(...images.map((img) => img.height));
+
     const canvas = document.createElement("canvas");
-    canvas.width = 500 * numberOfImages;
-    canvas.height = 1000;
+    canvas.width = totalWidth;
+    canvas.height = maxHeight;
+
     return canvas;
   };
 
-  const drawImagesOnCanvas = async (canvas, group) => {
+  // Vẽ hình ảnh lên canvas theo hàng ngang
+  const drawImagesOnCanvas = async (canvas, images) => {
     const ctx = canvas.getContext("2d");
-    const imgWidth = 500;
-    const imgHeight = 1000;
 
-    const loadImagePromises = group.map((screenshot, index) => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
-          ctx.drawImage(img, index * imgWidth, 0, imgWidth, imgHeight);
-          resolve();
-        };
-        img.onerror = (err) => reject(err);
-        img.src = screenshot.screenshot;
-      });
+    let xOffset = 0;
+    images.forEach(({ img, width, height }) => {
+      ctx.drawImage(img, xOffset, 0, width, height);
+      xOffset += width;
     });
-
-    await Promise.all(loadImagePromises);
   };
 
+  // Chuyển canvas thành Blob để tải về
   const createBlobFromCanvas = (canvas) => {
     return new Promise((resolve, reject) => {
       canvas.toBlob((blob) => {
@@ -218,6 +191,7 @@ const ScreenshotComponent = () => {
     });
   };
 
+  // Hàm tải xuống toàn bộ ảnh đã ghép
   const handleDownloadAllImage = async () => {
     if (screenShots.length === 0) {
       alert("Chưa có ảnh nào để tải xuống");
@@ -225,6 +199,42 @@ const ScreenshotComponent = () => {
     }
     await handleCombineScreenshots(screenShots);
   };
+
+  // const handleDownloadAllImage = async () => {
+  //   const images = document.querySelectorAll("img"); // Lấy tất cả ảnh đang hiển thị
+  //   if (images.length === 0) {
+  //     alert("Chưa có ảnh nào để tải xuống");
+  //     return;
+  //   }
+
+  //   const zip = new JSZip();
+
+  //   for (let i = 0; i < images.length; i++) {
+  //     const imgSrc = images[i].src;
+
+  //     let imgBlob;
+  //     if (imgSrc.startsWith("data:image")) {
+  //       // Xử lý ảnh base64
+  //       const base64Data = imgSrc.split(",")[1];
+  //       const byteCharacters = atob(base64Data);
+  //       const byteNumbers = new Uint8Array(byteCharacters.length);
+
+  //       for (let j = 0; j < byteCharacters.length; j++) {
+  //         byteNumbers[j] = byteCharacters.charCodeAt(j);
+  //       }
+
+  //       imgBlob = new Blob([byteNumbers], { type: "image/png" });
+  //     } else {
+  //       // Xử lý ảnh có URL
+  //       imgBlob = await fetch(imgSrc).then((res) => res.blob());
+  //     }
+
+  //     zip.file(`screenshot_${i + 1}.png`, imgBlob);
+  //   }
+
+  //   const zipBlob = await zip.generateAsync({ type: "blob" });
+  //   saveAs(zipBlob, "screenshots.zip");
+  // };
 
   const handleLoadMore = () => {
     setVisibleScreenshots((prev) => prev + 6);
@@ -240,15 +250,21 @@ const ScreenshotComponent = () => {
     }).format(price);
   };
 
+  // Lấy productName từ phần tử đầu tiên trong nhóm
+  // let fileName = group[0]?.productName
+  //   ? `${group[0].productName
+  //       .replace(/[^a-zA-Z0-9\s]/g, "")
+  //       .replace(/\s+/g, "_")}.png`
+  //   : `group_${i + 1}.png`;
   return (
     <div className="p-6 bg-gray-100 min-h-screen pt-16">
       <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg p-8">
         <h1 className="text-3xl font-semibold text-gray-800 mb-6">
-          Chụp Nhiều sản phẩm
+          Chụp Từng sản phẩm
         </h1>
 
         {/* Dropdown lựa chọn option */}
-        <div>
+        <div className="mb-4">
           <Select
             value={selectOption}
             onChange={handleSelectChange}
@@ -257,6 +273,9 @@ const ScreenshotComponent = () => {
             <option value="cellPhoneS">{optionsWeb.cellPhoneS.name}</option>
             <option value="didongviet">{optionsWeb.didongviet.name}</option>
             <option value="hoangha">{optionsWeb.hoangha.name}</option>
+            <option value="thegioididong">
+              {optionsWeb.thegioididong.name}
+            </option>
           </Select>
         </div>
 
@@ -273,9 +292,7 @@ const ScreenshotComponent = () => {
             onClick={handleCaptureScreenshot}
             className="w-full md:w-1/3 bg-blue-600 text-white py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
           >
-            {isLoadingCellPhoneS || isLoadingDiDongViet || isLoadingHoangHa
-              ? "Đang Chụp..."
-              : "Chụp Màn Hình"}
+            {isLoadingTgdd ? "Đang Chụp..." : "Chụp Màn Hình"}
           </Button>
         </div>
 
@@ -286,11 +303,7 @@ const ScreenshotComponent = () => {
           Tải Tất Cả Ảnh
         </Button>
 
-        {/* Error Message */}
-        {errorMessage && (
-          <div className="mt-4 text-red-500 font-semibold">{errorMessage}</div>
-        )}
-
+        {/* Bảng hiển thị ảnh đã chụp */}
         <div className="overflow-x-auto mb-6">
           <table className="table-auto w-full border-collapse border border-gray-300">
             <thead className="bg-gray-200">
@@ -321,23 +334,21 @@ const ScreenshotComponent = () => {
                       key={index}
                       className="odd:bg-white even:bg-gray-50 hover:bg-gray-100 transition"
                     >
-                      <td className="border border-gray-300 px-6 py-4 text-center text-sm font-medium text-gray-600">
+                      <td className="border border-gray-300 px-6 py-4">
                         {index + 1}
                       </td>
-                      <td className="border border-gray-300 px-6 py-4 text-center">
+                      <td className="border border-gray-300 px-6 py-4">
                         <img
-                          src={screenshot.screenshot}
-                          alt={`Screenshot ${index + 1}`}
-                          className="w-40 mx-auto rounded-lg shadow-md hover:scale-105 transition-transform"
+                          src={screenshot.screenshot || ""}
+                          alt="Screenshot"
+                          className="w-20 h-20 object-cover"
                         />
                       </td>
-                      <td className="border border-gray-300 px-6 py-4 text-center text-sm font-medium text-gray-600">
-                        {screenshot.productName}
+                      <td className="border border-gray-300 px-6 py-4">
+                        {screenshot.productName || "N/A"}
                       </td>
-                      <td className="border border-gray-300 px-6 py-4 text-center text-sm font-medium text-gray-600">
-                        {screenshot.productPrice
-                          ? formatPrice(screenshot.productPrice)
-                          : "Chưa có giá"}
+                      <td className="border border-gray-300 px-6 py-4">
+                        {formatPrice(screenshot.productPrice)}
                       </td>
                       <td className="border border-gray-300 px-6 py-4 text-sm text-blue-500 underline">
                         {screenshot ? (
@@ -357,11 +368,9 @@ const ScreenshotComponent = () => {
             </tbody>
           </table>
         </div>
-
-        {(isErrorCellPhoneS || isErrorDiDongViet || isErrorHoangHa) && (
+        {isErrorTgdd && (
           <p className="mt-4 text-red-500 font-semibold">
-            Có lỗi xảy ra:{" "}
-            {(errorCellPhoneS || errorDiDongViet || errorHoangHa).message}
+            Có lỗi xảy ra: {errorMessage || errorTgdd.message}
           </p>
         )}
 
@@ -380,4 +389,4 @@ const ScreenshotComponent = () => {
   );
 };
 
-export default ScreenshotComponent;
+export default ScreenshotSingleProduct;

@@ -7,4 +7,12 @@ export const optionsWeb = {
     name: "cellphones",
     placeholder: "Vui Lòng nhập link của cellphones",
   },
+  hoangha: {
+    name: "hoangha",
+    placeholder: "Vui Lòng nhập link của hoangha",
+  },
+  thegioididong: {
+    name: "thegioididong",
+    placeholder: "Vui Lòng nhập link của thegioididong",
+  },
 };
