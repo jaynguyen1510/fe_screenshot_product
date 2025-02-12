@@ -52,7 +52,7 @@ const HeaderComponents = () => {
           </h1>
 
           <a
-            href="https://drive.google.com/uc?export=download&id=1mNMTszLOxZKOTVL_MEhEGlu7trIXZeGI"
+            href="https://drive.google.com/file/d/1xOo_W_YiXuIK0OYf8hKusg7trMgAIYnj/view?usp=drive_link"
             className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all duration-300"
             download
           >

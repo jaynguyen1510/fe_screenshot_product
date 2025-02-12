@@ -112,7 +112,7 @@ const ScreenshotSingleProduct = () => {
   const handleCombineScreenshots = async (screenshotsData) => {
     if (!screenshotsData || screenshotsData.length === 0) return;
 
-    const chunks = splitIntoChunks(screenshotsData, 5); // Nhóm tối đa 5 ảnh
+    const chunks = splitIntoChunks(screenshotsData, 10); // Nhóm tối đa 10 ảnh
     const zip = new JSZip();
 
     for (let i = 0; i < chunks.length; i++) {
@@ -124,7 +124,12 @@ const ScreenshotSingleProduct = () => {
       await drawImagesOnCanvas(canvas, images);
 
       const blob = await createBlobFromCanvas(canvas);
-      zip.file(`combined_screenshot_group_${i + 1}.png`, blob);
+
+      // Lưu file ZIP với tên sản phẩm
+      group.forEach((item) => {
+        const safeFileName = item.productName.replace(/[<>:"/\\|?*]+/g, ""); // Xóa ký tự đặc biệt
+        zip.file(`${safeFileName}.png`, blob);
+      });
     }
 
     const zipBlob = await zip.generateAsync({ type: "blob" });
